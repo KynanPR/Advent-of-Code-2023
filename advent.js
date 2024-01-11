@@ -27,24 +27,24 @@ function sum(array) {
     });
     return total
 }
-
-getCalibrationTotal('./input.txt').then(result => console.log(sum(result[1])));
+getCalibrationTotal('./test.txt').then(result => console.log(result));
+// getCalibrationTotal('./input.txt').then(result => console.log(sum(result[1])));
 
 async function getCalibrationTotal(filePath) {
     try {
         return getCalibrationArray(filePath).then( // Await the file read and splitting
             result => { // Process that array
-                const allValues = result.map((element) => {
-                    return getCalibrationValue(element, calibrationRegex);
-                });
-                const finalValue = allValues.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-                const output = [result, allValues, finalValue];
-                return output;
+                // const allValues = result.map((element) => {
+                //     return getCalibrationValue(element, calibrationRegex);
+                // });
+                // const finalValue = allValues.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+                // const output = [result, allValues, finalValue];
+                // return output;
 
-            //     return result.map((element) => {
-            //         return getCalibrationValue(element, calibrationRegex); // Parse the calibration value from each array element
-            //     })
-            // .reduce((accumulator, currentValue) => accumulator + currentValue, 0); // Sum together the results
+                return result.map((element) => {
+                    return getCalibrationValue(element, calibrationRegex); // Parse the calibration value from each array element
+                })
+            .reduce((accumulator, currentValue) => accumulator + currentValue, 0); // Sum together the results
         });
     } catch (err) {
         console.error(err);
