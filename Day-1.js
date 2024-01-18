@@ -27,7 +27,7 @@ function sum(array) {
     });
     return total
 }
-getCalibrationTotal('./test.txt').then(result => console.log(result));
+getCalibrationTotal('./input.txt').then(result => console.log(result));
 // getCalibrationTotal('./input.txt').then(result => console.log(sum(result[1])));
 
 async function getCalibrationTotal(filePath) {
@@ -44,11 +44,12 @@ async function getCalibrationTotal(filePath) {
                 return result.map((element) => {
                     return getCalibrationValue(element, calibrationRegex); // Parse the calibration value from each array element
                 })
-            .reduce((accumulator, currentValue) => accumulator + currentValue, 0); // Sum together the results
-        });
+                    .reduce((accumulator, currentValue) => accumulator + currentValue, 0); // Sum together the results
+            });
     } catch (err) {
         console.error(err);
-    }}
+    }
+}
 
 async function getCalibrationArray(filePath) {
     try {
@@ -61,21 +62,23 @@ async function getCalibrationArray(filePath) {
 }
 
 function getCalibrationValue(inputString, regex) {
-    const parsedMatches = [...getMatches(inputString, regex)] // Create an array of the individual match objects found
-    .map(parseDigitFromMatch); // For each match, get its real digit form
-    const calibrationValue = parseInt(parsedMatches.at(0) + parsedMatches.at(-1)); // Match order is preserved so calibration value is first and last digit
+    let matches = [];
+    while (firstMatch = regex.exec(inputString)) {
+        matches.push(firstMatch[0]);
+        regex.lastIndex = firstMatch.index + 1;
+    }
+    const firstDigit = parseDigit(matches.at(0));
+    const lastDigit = parseDigit(matches.at(-1));
+    const calibrationValue = parseInt(firstDigit + lastDigit);
     return calibrationValue;
 }
 
-function getMatches(inputString, regex) {
-    return inputString.matchAll(regex);
-}
-
-function parseDigitFromMatch(maybeDigit) {
-    if (maybeDigit.groups.Digit) { // Check if the match group is Digit
-        return maybeDigit[0]; // It's a real digit so can just return the matched digit
+function parseDigit(maybeDigit) {
+    if (maybeDigit.match(/\d/)) { // Check if the match group is Digit
+        return maybeDigit; // It's a real digit so can just return the matched digit
     } else { // It was a psuedoDigit
-        return replacePsudeoDigit(maybeDigit[0]); // Return the real digit form of the psuedoDigit
+        const realDigit = replacePsudeoDigit(maybeDigit); // Return the real digit form of the psuedoDigit
+        return realDigit;
     }
 }
 
