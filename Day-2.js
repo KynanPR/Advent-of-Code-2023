@@ -40,117 +40,75 @@ class GameLog {
 }
 
 async function getSessionLog(rawSessionLog) {
-    try {
-        const parsedSessionLog = parseRawSessionLog(rawSessionLog); // rawSessionLog to array of rawGameLog
-        const gameLogs = parsedSessionLog.map(rawGameLog => {
-            return getGameLog(rawGameLog);
-        });
-        return gameLogs;
-    } catch (error) {
-        return error;
-    }
+    // const parsedSessionLog = parseRawSessionLog(rawSessionLog).then(result => {return result});
+    const parsedSessionLog = await parseRawSessionLog(rawSessionLog); // rawSessionLog to array of rawGameLog
+    const gameLogs = await parsedSessionLog.map(rawGameLog => {
+        return getGameLog(rawGameLog);
+    });
+    return gameLogs;
 }
 
 async function parseRawSessionLog(logPath) {
-    try {
-        const rawGameLogs = await parseMultilineInput(logPath);
-        return rawGameLogs;
-    } catch (error) {
-        console.error(error);
-    }
+    const rawGameLogs = await parseMultilineInput(logPath);
+    return rawGameLogs;
 }
 
-async function getGameLog(rawGameLog) {
-    try {
+function getGameLog(rawGameLog) {
         const splitGameLog = parseRawGameLog(rawGameLog); // rawGameLog into splitLog object
         const gameId = getGameId(splitGameLog.rawGameId); // rawGameId to int gameId
         const game = getGame(splitGameLog.rawGame); // rawGame to Game object
         return new GameLog(gameId, game);
-    } catch (error) {
-        return error;
-    }
 }
 
-async function parseRawGameLog(rawGameLog) {
-    try {
+function parseRawGameLog(rawGameLog) {
         const splitLog = rawGameLog.split(':');
-        const rawGameId = splitlog[0];
+        const rawGameId = splitLog[0];
         const rawGame = splitLog[1];
         return {
             rawGameId: rawGameId,
             rawGame: rawGame,
         }
-    } catch (error) {
-        return error;
-    }
 }
 
-async function getGame(rawGame) {
-    try {
+function getGame(rawGame) {
         const parsedGame = parseRawGame(rawGame); // rawGame into array of rawSubSet
         const subsSets = parsedGame.map(rawSubSet => {
             return getSubSet(rawSubSet);
         });
         return new Game(subsSets);
-    } catch (error) {
-        return error;
     }
-}
 
-async function parseRawGame(rawGame) {
-    try {
+function parseRawGame(rawGame) {
         const rawSubSets = rawGame.split(';');
         return rawSubSets;
-    } catch (error) {
-        return error;
-    }
 }
 
-async function getGameId(rawGameId) {
-    try {
+function getGameId(rawGameId) {
         const noDigits = removeNonDigits(rawGameId);
         return noDigits;
-    } catch (error) {
-        return error;
-    }
 }
 
-async function getSubSet(rawSubSet) {
-    try {
+function getSubSet(rawSubSet) {
         const parsedSubSet = parseRawSubSet(rawSubSet); // rawSubSet into array of rawPull
         const pulls = parsedSubSet.map(rawPull => {
             return getPull(rawPull);
         });
         return new SubSet(pulls);
-    } catch (error) {
-        return error;
     }
-}
 
-async function parseRawSubSet(rawSubSet) {
-    try {
-        const rawPulls = rawSubSets.split(',');
+function parseRawSubSet(rawSubSet) {
+        const rawPulls = rawSubSet.split(',');
         return rawPulls;
-    } catch (error) {
-        return error;
-    }
 }
 
-async function getPull(rawPull) {
-    try {
-        const splitPull = parseRawPull(rawPull); // '1 blue' -> ['1', 'blue']
+function getPull(rawPull) {
+        const trimmedPull = rawPull.trim();
+        const splitPull = parseRawPull(trimmedPull); // '1 blue' -> ['1', 'blue']
         return new Pull(...splitPull);
-    } catch (error) {
-        return error;
-    }
 }
 
-async function parseRawPull(rawPull) {
-    try {
+function parseRawPull(rawPull) {
         return rawPull.split(' ');
-    } catch (error) {
-        return error;
-    }
 }
 
 function removeNonDigits(inputString) {
@@ -167,4 +125,6 @@ async function parseMultilineInput(filePath) { // Takes a multiline input and re
     }
 }
 
-console.log(getSessionLog('./Day-2 Input.txt'));
+// parseMultilineInput('./Day-2 Input.txt').then(result => {console.log(result)});
+
+getSessionLog('./Day-2 Input.txt').then(result => console.log(result));

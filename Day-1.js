@@ -27,7 +27,7 @@ function sum(array) {
     });
     return total
 }
-getCalibrationTotal('./input.txt').then(result => console.log(result));
+getCalibrationTotal('./Day-1 input.txt').then(result => console.log(result));
 // getCalibrationTotal('./input.txt').then(result => console.log(sum(result[1])));
 
 async function getCalibrationTotal(filePath) {
